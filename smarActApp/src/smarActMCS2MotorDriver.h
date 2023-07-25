@@ -8,14 +8,14 @@ Jan 19, 2019
 
 Note:
 The MCS2 controller uses 64-bit int for the encoder and target positions. The motor record is limited
-to 32 bit int for RMP (https://github.com/epics-modules/motor/issues/8, 
+to 32 bit int for RMP (https://github.com/epics-modules/motor/issues/8,
 https://epics.anl.gov/tech-talk/2018/msg00087.php) which effectively limits the travel
-range to +/- 2.1mm. 
+range to +/- 2.1mm.
 Since it doesn't seem the motor record will update to using 64bit int the choices I can see are:
 * 1 - using a non-standard motor support
 * 2 - rescaling the minimum resolution to 1nm to effectively increase the range to 2.1m
 
-I chose option 2. 
+I chose option 2.
 1 step = 1nm
 
 Someone with more experience may have a better solution.
@@ -37,6 +37,7 @@ The two that may be of significant interest are:
  * rot: controller ndeg --> driver udeg. Because of this the user can use the positioner for deg ranges
  * If this scaling was not implemented the maximum range would be ~2.147 mm/deg, now it's ~2147 mm/deg */
 #define PULSES_PER_STEP 1000
+#define GET_VARIABLE_NAME(Variable) (#Variable)
 
 /** MCS2 Axis status flags **/
 const unsigned short ACTIVELY_MOVING         = 0x0001;
@@ -73,6 +74,16 @@ const unsigned short   STOP_ON_REF_FOUND       = 0x0020;
 #define MCS2PstatString "PSTAT"
 #define MCS2RefString "REF"
 #define MCS2CalString "CAL"
+#define MCS2IoVoltString "IOVOLT"
+#define MCS2IoEnableString "IOENABLE"
+#define MCS2TrModeString "TRMODE"
+#define MCS2TrPolarityString "TRPOLARITY"
+#define MCS2TrWidthString "TRWIDTH"
+#define MCS2TrStartString "TRSTART"
+#define MCS2TrIncrementString "TRINCREMENT"
+#define MCS2TrMinString "TRMIN"
+#define MCS2TrMaxString "TRMAX"
+#define MCS2TrDirectionString "TRDIRECTION"
 
 class epicsShareClass MCS2Axis : public asynMotorAxis
 {
@@ -92,7 +103,7 @@ private:
   int channel_;
   asynStatus comStatus_;
 
-  
+
 friend class MCS2Controller;
 };
 
@@ -103,6 +114,7 @@ public:
 
   /* These are the methods that we override from asynMotorDriver */
   asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+  asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
 
   /* These are the methods that we override from asynMotorDriver */
   void report(FILE *fp, int level);
@@ -115,11 +127,21 @@ protected:
   int ptyp_; /**< positioner type */
   int ptyprb_; /**< positioner type readback */
   int pstatrb_; /**< positoner status word readback */
-  int ref_;  /**< reference command */ 
+  int ref_;  /**< reference command */
+  int iovolt_;  /**< I/O Module Voltage */
+  int ioenable_;  /**< enable/disable I/O Module options */
+  int trmode_;  /**< specify output trigger */
+  int trpolarity_;  /**< specify output polarity */
+  int trwidth_;  /**< specify trigger width */
+  int trstart_;
+  int trincrement_;
+  int trmin_;
+  int trmax_;
+  int trdirection_;
   int cal_;  /**< calibration command */
 #define LAST_MCS2_PARAM cal_
 #define NUM_MCS2_PARAMS (&LAST_MCS2_PARAM - &FIRST_MCS2_PARAM + 1)
-  
+
 friend class MCS2Axis;
 };
 

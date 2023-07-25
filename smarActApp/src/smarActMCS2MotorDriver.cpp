@@ -8,7 +8,7 @@ Jan 19, 2019
 
 */
 
-
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -28,16 +28,16 @@ static const char *driverName = "SmarActMCS2MotorDriver";
 
 /** Creates a new MCS2Controller object.
   * \param[in] portName             The name of the asyn port that will be created for this driver
-  * \param[in] MCS2PortName         The name of the drvAsynIPPPort that was created previously to connect to the MCS2 controller 
-  * \param[in] numAxes              The number of axes that this controller supports 
-  * \param[in] movingPollPeriod     The time between polls when any axis is moving 
-  * \param[in] idlePollPeriod       The time between polls when no axis is moving 
+  * \param[in] MCS2PortName         The name of the drvAsynIPPPort that was created previously to connect to the MCS2 controller
+  * \param[in] numAxes              The number of axes that this controller supports
+  * \param[in] movingPollPeriod     The time between polls when any axis is moving
+  * \param[in] idlePollPeriod       The time between polls when no axis is moving
   */
-MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, int numAxes, 
+MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, int numAxes,
                                double movingPollPeriod, double idlePollPeriod, int unusedMask)
-  :  asynMotorController(portName, numAxes, NUM_MCS2_PARAMS, 
+  :  asynMotorController(portName, numAxes, NUM_MCS2_PARAMS,
                          0, 0,
-                         ASYN_CANBLOCK | ASYN_MULTIDEVICE, 
+                         ASYN_CANBLOCK | ASYN_MULTIDEVICE,
                          1, // autoconnect
                          0, 0)  // Default priority and stack size
 {
@@ -53,6 +53,16 @@ MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, i
   createParam(MCS2PstatString, asynParamInt32, &this->pstatrb_);   // whole positioner status word
   createParam(MCS2RefString, asynParamInt32, &this->ref_);
   createParam(MCS2CalString, asynParamInt32, &this->cal_);
+  createParam(MCS2IoVoltString, asynParamInt32, &this->iovolt_);
+  createParam(MCS2IoEnableString, asynParamInt32, &this->ioenable_);
+  createParam(MCS2TrModeString, asynParamInt32, &this->trmode_);
+  createParam(MCS2TrPolarityString, asynParamInt32, &this->trpolarity_);
+  createParam(MCS2TrWidthString, asynParamFloat64, &this->trwidth_);
+  createParam(MCS2TrStartString, asynParamFloat64, &this->trstart_);
+  createParam(MCS2TrIncrementString, asynParamFloat64, &this->trincrement_);
+  createParam(MCS2TrMinString, asynParamFloat64, &this->trmin_);
+  createParam(MCS2TrMaxString, asynParamFloat64, &this->trmax_);
+  createParam(MCS2TrDirectionString, asynParamInt32, &this->trdirection_);
 
   /* Connect to MCS2 controller */
   status = pasynOctetSyncIO->connect(MCS2PortName, 0, &pasynUserController_, NULL);
@@ -61,7 +71,7 @@ MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, i
 
   asynPrint(this->pasynUserSelf, ASYN_TRACEIO_DRIVER, "MCS2Controller::MCS2Controller: Connecting to controller\n");
   if (status) {
-    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR, 
+    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
       "%s:%s: cannot connect to MCS2 controller\n",
       driverName, functionName);
   }
@@ -71,7 +81,7 @@ MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, i
   sprintf(this->outString_, ":DEV:SNUM?");
   status = this->writeReadController();
   if (status) {
-    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR, 
+    asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
       "%s:%s: cannot connect to MCS2 controller\n",
       driverName, functionName);
   }
@@ -82,7 +92,7 @@ MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, i
   // Create the axis objects
   asynPrint(this->pasynUserSelf, ASYN_TRACEIO_DRIVER, "MCS2Controller::MCS2Controller: Creating axes\n");
 
-  for(axis=0; axis<numAxes; axis++){ 
+  for(axis=0; axis<numAxes; axis++){
     axisMask = (unusedMask & (1 << axis)) >> axis;
     if(!axisMask)
         new MCS2Axis(this, axis);
@@ -95,12 +105,12 @@ MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, i
 /** Creates a new MCS2Controller object.
   * Configuration command, called directly or from iocsh
   * \param[in] portName          The name of the asyn port that will be created for this driver
-  * \param[in] MCS2PortName      The name of the drvAsynIPPPort that was created previously to connect to the MCS2 controller 
-  * \param[in] numAxes           The number of axes that this controller supports 
+  * \param[in] MCS2PortName      The name of the drvAsynIPPPort that was created previously to connect to the MCS2 controller
+  * \param[in] numAxes           The number of axes that this controller supports
   * \param[in] movingPollPeriod  The time in ms between polls when any axis is moving
-  * \param[in] idlePollPeriod    The time in ms between polls when no axis is moving 
+  * \param[in] idlePollPeriod    The time in ms between polls when no axis is moving
   */
-extern "C" int MCS2CreateController(const char *portName, const char *MCS2PortName, int numAxes, 
+extern "C" int MCS2CreateController(const char *portName, const char *MCS2PortName, int numAxes,
                                     int movingPollPeriod, int idlePollPeriod, int unusedMask)
 {
   new MCS2Controller(portName, MCS2PortName, numAxes, movingPollPeriod/1000., idlePollPeriod/1000., unusedMask);
@@ -174,7 +184,7 @@ asynStatus MCS2Controller::clearErrors()
   */
 void MCS2Controller::report(FILE *fp, int level)
 {
-  fprintf(fp, "MCS2 motor driver %s, numAxes=%d, moving poll period=%f, idle poll period=%f\n", 
+  fprintf(fp, "MCS2 motor driver %s, numAxes=%d, moving poll period=%f, idle poll period=%f\n",
     this->portName, numAxes_, movingPollPeriod_, idlePollPeriod_);
 
   // Call the base class method
@@ -233,6 +243,31 @@ asynStatus MCS2Controller::writeInt32(asynUser *pasynUser, epicsInt32 value)
     sprintf(pAxis->pC_->outString_, ":CAL%d", pAxis->axisNo_);
     status = pAxis->pC_->writeController();
   }
+  else if (function == iovolt_) {
+    /* set output voltage for the digital outputs: 0=3.3V, 1=5V */
+    sprintf(pAxis->pC_->outString_, ":MOD0:IOM:VOLT %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ioenable_) {
+    /* enable/disable digital output */
+    sprintf(pAxis->pC_->outString_, ":MOD0:IOM:OPT %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == trmode_) {
+    /* specify output trigger */
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:MODE %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == trpolarity_) {
+    /* specify trigger polarity */
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:POL %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == trdirection_) {
+    /* specify trigger direction*/
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:DIR %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
   else {
     /* Call base class method */
     status = asynMotorController::writeInt32(pasynUser, value);
@@ -251,12 +286,79 @@ asynStatus MCS2Controller::writeInt32(asynUser *pasynUser, epicsInt32 value)
   return status;
 }
 
+/** Called when asyn clients call pasynFloat64->write().
+  * Extracts the function and axis number from pasynUser.
+  * Sets the value in the parameter library.
+  * For all other functions it calls asynMotorController::writeFloat64.
+  * Calls any registered callbacks for this pasynUser->reason and address.
+  * \param[in] pasynUser asynUser structure that encodes the reason and address.
+  * \param[in] value     Value to write. */
+asynStatus MCS2Controller::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
+{
+  int function = pasynUser->reason;
+  //char* var_name;
+  asynStatus status = asynSuccess;
+  MCS2Axis *pAxis = getAxis(pasynUser);
+  static const char *functionName = "writeFloat64";
+
+  /* Check if axis exists */
+  if(!pAxis) return asynError;
+
+  /* Set the parameter and readback in the parameter library.  This may be overwritten when we read back the
+   * status at the end, but that's OK */
+  status = setDoubleParam(pAxis->axisNo_, function, value);
+
+  if (function == trwidth_) {
+    /* specify trigger width in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:PWID %d", int(value*1e9));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == trstart_) {
+    /* specify trigger start in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:THR %d", int(value*1e9));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == trincrement_) {
+    /* specify trigger increment in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:INCR %d", int(value*1e9));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == trmin_) {
+    /* specify lower trigger limit in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:LMIN %ld", long(value*1e9));
+    status = pAxis->pC_->writeController();
+    //std::cout << ":CHAN0:TRIG:PCOM:LMIN " << long(value*1e9) << "\n";
+    std::cout << GET_VARIABLE_NAME(trmin_)[2];
+  }
+  else if (function == trmax_) {
+    /* specify higher trigger limit in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:LMAX %ld", long(value*1e9));
+    status = pAxis->pC_->writeController();
+  }
+  else {
+    /* Call base class method */
+    status = asynMotorController::writeFloat64(pasynUser, value);
+  }
+
+  /* Do callbacks so higher layers see any changes */
+  callParamCallbacks(pAxis->axisNo_);
+  if (status)
+    asynPrint(pasynUser, ASYN_TRACE_ERROR,
+        "%s:%s: error, status=%d function=%d, value=%f\n",
+        driverName, functionName, status, function, value);
+  else
+    asynPrint(pasynUser, ASYN_TRACEIO_DRIVER,
+        "%s:%s: function=%d, value=%f\n",
+        driverName, functionName, function, value);
+  return status;
+}
+
 // These are the MCS2Axis methods
 
 /** Creates a new MCS2Axis object.
-  * \param[in] pC Pointer to the ACRController to which this axis belongs. 
+  * \param[in] pC Pointer to the ACRController to which this axis belongs.
   * \param[in] axisNo Index number of this axis, range 0 to pC->numAxes_-1.
-  * 
+  *
   * Initializes register numbers, etc.
   */
 MCS2Axis::MCS2Axis(MCS2Controller *pC, int axisNo)
@@ -350,7 +452,7 @@ void MCS2Axis::report(FILE *fp, int level)
 asynStatus MCS2Axis::move(double position, int relative, double minVelocity, double maxVelocity, double acceleration)
 {
   asynStatus status = asynSuccess;
-  static const char *functionName = "move";
+  // static const char *functionName = "move";
 
   /* MCS2 move mode is:
    *	- absolute=0
@@ -376,7 +478,7 @@ asynStatus MCS2Axis::move(double position, int relative, double minVelocity, dou
 asynStatus MCS2Axis::home(double minVelocity, double maxVelocity, double acceleration, int forwards)
 {
   asynStatus status=asynSuccess;
-   static const char *functionName = "homeAxis";
+  //static const char *functionName = "homeAxis";
   printf("Home command received %d\n", forwards);
   unsigned short refOpt = 0;
 
@@ -414,7 +516,7 @@ asynStatus MCS2Axis::home(double minVelocity, double maxVelocity, double acceler
 asynStatus MCS2Axis::stop(double acceleration )
 {
   asynStatus status;
-  static const char *functionName = "stopAxis";
+  //static const char *functionName = "stopAxis";
 
   sprintf(pC_->outString_, ":STOP%d", channel_);
   status = pC_->writeController();
@@ -433,14 +535,14 @@ asynStatus MCS2Axis::setPosition(double position)
 }
 
 /** Polls the axis.
-  * This function reads the controller position, encoder position, the limit status, the moving status, 
+  * This function reads the controller position, encoder position, the limit status, the moving status,
   * the drive power-on status and positioner type. It does not current detect following error, etc.
   * but this could be added.
   * It calls setIntegerParam() and setDoubleParam() for each item that it polls,
   * and then calls callParamCallbacks() at the end.
   * \param[out] moving A flag that is set indicating that the axis is moving (1) or done (0). */
 asynStatus MCS2Axis::poll(bool *moving)
-{ 
+{
   int done;
   int chanState;
   int closedLoop;
