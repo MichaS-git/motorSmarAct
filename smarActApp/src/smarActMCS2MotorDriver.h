@@ -74,16 +74,37 @@ const unsigned short   STOP_ON_REF_FOUND       = 0x0020;
 #define MCS2PstatString "PSTAT"
 #define MCS2RefString "REF"
 #define MCS2CalString "CAL"
+
+/** I/O-Module parameters**/
 #define MCS2IoVoltString "IOVOLT"
 #define MCS2IoEnableString "IOENABLE"
-#define MCS2TrModeString "TRMODE"
-#define MCS2TrPolarityString "TRPOLARITY"
-#define MCS2TrWidthString "TRWIDTH"
-#define MCS2TrStartString "TRSTART"
-#define MCS2TrIncrementString "TRINCREMENT"
-#define MCS2TrMinString "TRMIN"
-#define MCS2TrMaxString "TRMAX"
-#define MCS2TrDirectionString "TRDIRECTION"
+/** Channel 1 **/
+#define MCS2Ch1TrModeString "CH1_TRMODE"
+#define MCS2Ch1TrPolarityString "CH1_TRPOLARITY"
+#define MCS2Ch1TrWidthString "CH1_TRWIDTH"
+#define MCS2Ch1TrStartString "CH1_TRSTART"
+#define MCS2Ch1TrIncrementString "CH1_TRINCREMENT"
+#define MCS2Ch1TrMinString "CH1_TRMIN"
+#define MCS2Ch1TrMaxString "CH1_TRMAX"
+#define MCS2Ch1TrDirectionString "CH1_TRDIRECTION"
+/** Channel 2 **/
+#define MCS2Ch2TrModeString "CH2_TRMODE"
+#define MCS2Ch2TrPolarityString "CH2_TRPOLARITY"
+#define MCS2Ch2TrWidthString "CH2_TRWIDTH"
+#define MCS2Ch2TrStartString "CH2_TRSTART"
+#define MCS2Ch2TrIncrementString "CH2_TRINCREMENT"
+#define MCS2Ch2TrMinString "CH2_TRMIN"
+#define MCS2Ch2TrMaxString "CH2_TRMAX"
+#define MCS2Ch2TrDirectionString "CH2_TRDIRECTION"
+/** Channel 3 **/
+#define MCS2Ch3TrModeString "CH3_TRMODE"
+#define MCS2Ch3TrPolarityString "CH3_TRPOLARITY"
+#define MCS2Ch3TrWidthString "CH3_TRWIDTH"
+#define MCS2Ch3TrStartString "CH3_TRSTART"
+#define MCS2Ch3TrIncrementString "CH3_TRINCREMENT"
+#define MCS2Ch3TrMinString "CH3_TRMIN"
+#define MCS2Ch3TrMaxString "CH3_TRMAX"
+#define MCS2Ch3TrDirectionString "CH3_TRDIRECTION"
 
 class epicsShareClass MCS2Axis : public asynMotorAxis
 {
@@ -128,18 +149,38 @@ protected:
   int ptyprb_; /**< positioner type readback */
   int pstatrb_; /**< positoner status word readback */
   int ref_;  /**< reference command */
-  int iovolt_;  /**< I/O Module Voltage */
-  int ioenable_;  /**< enable/disable I/O Module options */
-  int trmode_;  /**< specify output trigger */
-  int trpolarity_;  /**< specify output polarity */
-  int trwidth_;  /**< specify trigger width */
-  int trstart_;
-  int trincrement_;
-  int trmin_;
-  int trmax_;
-  int trdirection_;
   int cal_;  /**< calibration command */
-#define LAST_MCS2_PARAM cal_
+/** I/O Module options **/
+  int iovolt_;
+  int ioenable_;
+/** channel 1 **/
+  int ch1trmode_;
+  int ch1trpolarity_;
+  int ch1trwidth_;
+  int ch1trstart_;
+  int ch1trincrement_;
+  int ch1trmin_;
+  int ch1trmax_;
+  int ch1trdirection_;
+/** channel 2 **/
+  int ch2trmode_;
+  int ch2trpolarity_;
+  int ch2trwidth_;
+  int ch2trstart_;
+  int ch2trincrement_;
+  int ch2trmin_;
+  int ch2trmax_;
+  int ch2trdirection_;
+/** channel 3 **/
+  int ch3trmode_;
+  int ch3trpolarity_;
+  int ch3trwidth_;
+  int ch3trstart_;
+  int ch3trincrement_;
+  int ch3trmin_;
+  int ch3trmax_;
+  int ch3trdirection_;
+#define LAST_MCS2_PARAM ch3trdirection_
 #define NUM_MCS2_PARAMS (&LAST_MCS2_PARAM - &FIRST_MCS2_PARAM + 1)
 
 friend class MCS2Axis;

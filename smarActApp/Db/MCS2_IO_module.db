@@ -1,6 +1,6 @@
 ### I/O Module Properties ###
 
-record(bo, "$(P)$(M)ioVoltage") {
+record(bo, "$(P)ioVoltage") {
     field(DESC,"set I/O Voltage")
     field(DTYP,"asynInt32")
     field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))IOVOLT")
@@ -8,7 +8,7 @@ record(bo, "$(P)$(M)ioVoltage") {
     field(ONAM, "5 Volt")
 }
 
-record(bo, "$(P)$(M)ioEnable") {
+record(bo, "$(P)ioEnable") {
     field(DESC,"enable I/O Output")
     field(DTYP,"asynInt32")
     field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))IOENABLE")
@@ -18,11 +18,11 @@ record(bo, "$(P)$(M)ioEnable") {
 
 ### Output Trigger Properties for 3 channels ###
 
-record(mbbo, "$(P)$(M)ch1:Mode"){
+record(mbbo, "$(P)ch1:Mode"){
   field(DESC, "specify output trigger")
   field(DTYP, "asynInt32")
   field(SCAN, "Passive")
-  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRMODE")
+  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRMODE")
   field(ZRVL,"0")
   field(ZRST, "Constant")
   field(ONVL,"1")
@@ -36,54 +36,204 @@ record(mbbo, "$(P)$(M)ch1:Mode"){
   field(VAL,  "0")
 }
 
-record(bo, "$(P)$(M)ch1:Polarity") {
+record(bo, "$(P)ch1:Polarity") {
     field(DESC,"define output polarity")
     field(DTYP,"asynInt32")
-    field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRPOLARITY")
+    field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRPOLARITY")
     field(ZNAM, "Active low")
     field(ONAM, "Active high")
 } 
 
-record(ao, "$(P)$(M)ch1:PulseWidth") {
+record(ao, "$(P)ch1:PulseWidth") {
   field(DESC, "Trigger Pulse Width")
   field(DTYP, "asynFloat64")
-  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRWIDTH")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRWIDTH")
   field(PREC, "5")
 }
 
-record(ao, "$(P)$(M)ch1:StartThreshold") {
+record(ao, "$(P)ch1:StartThreshold") {
   field(DESC, "Trigger Start Threshold")
   field(DTYP, "asynFloat64")
-  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRSTART")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRSTART")
   field(PREC, "5")
 }
 
-record(ao, "$(P)$(M)ch1:Increment") {
+record(ao, "$(P)ch1:Increment") {
   field(DESC, "Trigger Increment")
   field(DTYP, "asynFloat64")
-  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRINCREMENT")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRINCREMENT")
   field(PREC, "5")
 }
 
-record(ao, "$(P)$(M)ch1:LimMin") {
+record(ao, "$(P)ch1:LimMin") {
   field(DESC, "Trigger Limit Minimum")
   field(DTYP, "asynFloat64")
-  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRMIN")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRMIN")
   field(PREC, "5")
 }
 
-record(ao, "$(P)$(M)ch1:LimMax") {
+record(ao, "$(P)ch1:LimMax") {
   field(DESC, "Trigger Limit Maximum")
   field(DTYP, "asynFloat64")
-  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRMAX")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRMAX")
   field(PREC, "5")
 }
 
-record(mbbo, "$(P)$(M)ch1:Direction"){
+record(mbbo, "$(P)ch1:Direction"){
   field(DESC, "specify trigger direction")
   field(DTYP, "asynInt32")
   field(SCAN, "Passive")
-  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))TRDIRECTION")
+  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH1_TRDIRECTION")
+  field(ZRVL,"0")
+  field(ZRST, "Forward")
+  field(ONVL,"1")
+  field(ONST, "Backward")
+  field(TWVL,"2")
+  field(TWST, "Either")
+  field(VAL,  "0")
+}
+
+record(mbbo, "$(P)ch2:Mode"){
+  field(DESC, "specify output trigger")
+  field(DTYP, "asynInt32")
+  field(SCAN, "Passive")
+  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRMODE")
+  field(ZRVL,"0")
+  field(ZRST, "Constant")
+  field(ONVL,"1")
+  field(ONST, "Position compare")
+  field(TWVL,"2")
+  field(TWST, "Target reached")
+  field(THVL,"3")
+  field(THST, "Actively moving")
+  field(FRVL,"4")
+  field(FRST, "In position")
+  field(VAL,  "0")
+}
+
+record(bo, "$(P)ch2:Polarity") {
+    field(DESC,"define output polarity")
+    field(DTYP,"asynInt32")
+    field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRPOLARITY")
+    field(ZNAM, "Active low")
+    field(ONAM, "Active high")
+} 
+
+record(ao, "$(P)ch2:PulseWidth") {
+  field(DESC, "Trigger Pulse Width")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRWIDTH")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch2:StartThreshold") {
+  field(DESC, "Trigger Start Threshold")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRSTART")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch2:Increment") {
+  field(DESC, "Trigger Increment")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRINCREMENT")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch2:LimMin") {
+  field(DESC, "Trigger Limit Minimum")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRMIN")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch2:LimMax") {
+  field(DESC, "Trigger Limit Maximum")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRMAX")
+  field(PREC, "5")
+}
+
+record(mbbo, "$(P)ch2:Direction"){
+  field(DESC, "specify trigger direction")
+  field(DTYP, "asynInt32")
+  field(SCAN, "Passive")
+  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH2_TRDIRECTION")
+  field(ZRVL,"0")
+  field(ZRST, "Forward")
+  field(ONVL,"1")
+  field(ONST, "Backward")
+  field(TWVL,"2")
+  field(TWST, "Either")
+  field(VAL,  "0")
+}
+
+record(mbbo, "$(P)ch3:Mode"){
+  field(DESC, "specify output trigger")
+  field(DTYP, "asynInt32")
+  field(SCAN, "Passive")
+  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRMODE")
+  field(ZRVL,"0")
+  field(ZRST, "Constant")
+  field(ONVL,"1")
+  field(ONST, "Position compare")
+  field(TWVL,"2")
+  field(TWST, "Target reached")
+  field(THVL,"3")
+  field(THST, "Actively moving")
+  field(FRVL,"4")
+  field(FRST, "In position")
+  field(VAL,  "0")
+}
+
+record(bo, "$(P)ch3:Polarity") {
+    field(DESC,"define output polarity")
+    field(DTYP,"asynInt32")
+    field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRPOLARITY")
+    field(ZNAM, "Active low")
+    field(ONAM, "Active high")
+} 
+
+record(ao, "$(P)ch3:PulseWidth") {
+  field(DESC, "Trigger Pulse Width")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRWIDTH")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch3:StartThreshold") {
+  field(DESC, "Trigger Start Threshold")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRSTART")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch3:Increment") {
+  field(DESC, "Trigger Increment")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRINCREMENT")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch3:LimMin") {
+  field(DESC, "Trigger Limit Minimum")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRMIN")
+  field(PREC, "5")
+}
+
+record(ao, "$(P)ch3:LimMax") {
+  field(DESC, "Trigger Limit Maximum")
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRMAX")
+  field(PREC, "5")
+}
+
+record(mbbo, "$(P)ch3:Direction"){
+  field(DESC, "specify trigger direction")
+  field(DTYP, "asynInt32")
+  field(SCAN, "Passive")
+  field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))CH3_TRDIRECTION")
   field(ZRVL,"0")
   field(ZRST, "Forward")
   field(ONVL,"1")

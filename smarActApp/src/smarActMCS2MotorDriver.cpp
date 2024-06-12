@@ -55,14 +55,30 @@ MCS2Controller::MCS2Controller(const char *portName, const char *MCS2PortName, i
   createParam(MCS2CalString, asynParamInt32, &this->cal_);
   createParam(MCS2IoVoltString, asynParamInt32, &this->iovolt_);
   createParam(MCS2IoEnableString, asynParamInt32, &this->ioenable_);
-  createParam(MCS2TrModeString, asynParamInt32, &this->trmode_);
-  createParam(MCS2TrPolarityString, asynParamInt32, &this->trpolarity_);
-  createParam(MCS2TrWidthString, asynParamFloat64, &this->trwidth_);
-  createParam(MCS2TrStartString, asynParamFloat64, &this->trstart_);
-  createParam(MCS2TrIncrementString, asynParamFloat64, &this->trincrement_);
-  createParam(MCS2TrMinString, asynParamFloat64, &this->trmin_);
-  createParam(MCS2TrMaxString, asynParamFloat64, &this->trmax_);
-  createParam(MCS2TrDirectionString, asynParamInt32, &this->trdirection_);
+  createParam(MCS2Ch1TrModeString, asynParamInt32, &this->ch1trmode_);
+  createParam(MCS2Ch1TrPolarityString, asynParamInt32, &this->ch1trpolarity_);
+  createParam(MCS2Ch1TrWidthString, asynParamFloat64, &this->ch1trwidth_);
+  createParam(MCS2Ch1TrStartString, asynParamFloat64, &this->ch1trstart_);
+  createParam(MCS2Ch1TrIncrementString, asynParamFloat64, &this->ch1trincrement_);
+  createParam(MCS2Ch1TrMinString, asynParamFloat64, &this->ch1trmin_);
+  createParam(MCS2Ch1TrMaxString, asynParamFloat64, &this->ch1trmax_);
+  createParam(MCS2Ch1TrDirectionString, asynParamInt32, &this->ch1trdirection_);
+  createParam(MCS2Ch2TrModeString, asynParamInt32, &this->ch2trmode_);
+  createParam(MCS2Ch2TrPolarityString, asynParamInt32, &this->ch2trpolarity_);
+  createParam(MCS2Ch2TrWidthString, asynParamFloat64, &this->ch2trwidth_);
+  createParam(MCS2Ch2TrStartString, asynParamFloat64, &this->ch2trstart_);
+  createParam(MCS2Ch2TrIncrementString, asynParamFloat64, &this->ch2trincrement_);
+  createParam(MCS2Ch2TrMinString, asynParamFloat64, &this->ch2trmin_);
+  createParam(MCS2Ch2TrMaxString, asynParamFloat64, &this->ch2trmax_);
+  createParam(MCS2Ch2TrDirectionString, asynParamInt32, &this->ch2trdirection_);
+  createParam(MCS2Ch3TrModeString, asynParamInt32, &this->ch3trmode_);
+  createParam(MCS2Ch3TrPolarityString, asynParamInt32, &this->ch3trpolarity_);
+  createParam(MCS2Ch3TrWidthString, asynParamFloat64, &this->ch3trwidth_);
+  createParam(MCS2Ch3TrStartString, asynParamFloat64, &this->ch3trstart_);
+  createParam(MCS2Ch3TrIncrementString, asynParamFloat64, &this->ch3trincrement_);
+  createParam(MCS2Ch3TrMinString, asynParamFloat64, &this->ch3trmin_);
+  createParam(MCS2Ch3TrMaxString, asynParamFloat64, &this->ch3trmax_);
+  createParam(MCS2Ch3TrDirectionString, asynParamInt32, &this->ch3trdirection_);
 
   /* Connect to MCS2 controller */
   status = pasynOctetSyncIO->connect(MCS2PortName, 0, &pasynUserController_, NULL);
@@ -253,19 +269,49 @@ asynStatus MCS2Controller::writeInt32(asynUser *pasynUser, epicsInt32 value)
     sprintf(pAxis->pC_->outString_, ":MOD0:IOM:OPT %d", int(value));
     status = pAxis->pC_->writeController();
   }
-  else if (function == trmode_) {
+  else if (function == ch1trmode_) {
     /* specify output trigger */
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:MODE %d", int(value));
     status = pAxis->pC_->writeController();
   }
-  else if (function == trpolarity_) {
+  else if (function == ch1trpolarity_) {
     /* specify trigger polarity */
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:POL %d", int(value));
     status = pAxis->pC_->writeController();
   }
-  else if (function == trdirection_) {
+  else if (function == ch1trdirection_) {
     /* specify trigger direction*/
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:DIR %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trmode_) {
+    /* specify output trigger */
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:OUTP:MODE %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trpolarity_) {
+    /* specify trigger polarity */
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:OUTP:POL %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trdirection_) {
+    /* specify trigger direction*/
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:PCOM:DIR %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trmode_) {
+    /* specify output trigger */
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:OUTP:MODE %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trpolarity_) {
+    /* specify trigger polarity */
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:OUTP:POL %d", int(value));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trdirection_) {
+    /* specify trigger direction*/
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:PCOM:DIR %d", int(value));
     status = pAxis->pC_->writeController();
   }
   else {
@@ -308,31 +354,82 @@ asynStatus MCS2Controller::writeFloat64(asynUser *pasynUser, epicsFloat64 value)
    * status at the end, but that's OK */
   status = setDoubleParam(pAxis->axisNo_, function, value);
 
-  if (function == trwidth_) {
+  if (function == ch1trwidth_) {
     /* specify trigger width in steps*/
-    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:PWID %d", int(value*1e9));
+    sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:OUTP:PWID %d", int(value*1e6));
     status = pAxis->pC_->writeController();
   }
-  else if (function == trstart_) {
+  else if (function == ch1trstart_) {
     /* specify trigger start in steps*/
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:THR %d", int(value*1e9));
     status = pAxis->pC_->writeController();
   }
-  else if (function == trincrement_) {
+  else if (function == ch1trincrement_) {
     /* specify trigger increment in steps*/
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:INCR %d", int(value*1e9));
     status = pAxis->pC_->writeController();
   }
-  else if (function == trmin_) {
+  else if (function == ch1trmin_) {
     /* specify lower trigger limit in steps*/
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:LMIN %ld", long(value*1e9));
     status = pAxis->pC_->writeController();
-    //std::cout << ":CHAN0:TRIG:PCOM:LMIN " << long(value*1e9) << "\n";
     std::cout << GET_VARIABLE_NAME(trmin_)[2];
   }
-  else if (function == trmax_) {
+  else if (function == ch1trmax_) {
     /* specify higher trigger limit in steps*/
     sprintf(pAxis->pC_->outString_, ":CHAN0:TRIG:PCOM:LMAX %ld", long(value*1e9));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trwidth_) {
+    /* specify trigger width in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:OUTP:PWID %d", int(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trstart_) {
+    /* specify trigger start in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:PCOM:THR %d", int(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trincrement_) {
+    /* specify trigger increment in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:PCOM:INCR %d", int(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch2trmin_) {
+    /* specify lower trigger limit in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:PCOM:LMIN %ld", long(value*1e6));
+    status = pAxis->pC_->writeController();
+    std::cout << GET_VARIABLE_NAME(trmin_)[2];
+  }
+  else if (function == ch2trmax_) {
+    /* specify higher trigger limit in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN1:TRIG:PCOM:LMAX %ld", long(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trwidth_) {
+    /* specify trigger width in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:OUTP:PWID %d", int(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trstart_) {
+    /* specify trigger start in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:PCOM:THR %d", int(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trincrement_) {
+    /* specify trigger increment in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:PCOM:INCR %d", int(value*1e6));
+    status = pAxis->pC_->writeController();
+  }
+  else if (function == ch3trmin_) {
+    /* specify lower trigger limit in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:PCOM:LMIN %ld", long(value*1e6));
+    status = pAxis->pC_->writeController();
+    std::cout << GET_VARIABLE_NAME(trmin_)[2];
+  }
+  else if (function == ch3trmax_) {
+    /* specify higher trigger limit in steps*/
+    sprintf(pAxis->pC_->outString_, ":CHAN2:TRIG:PCOM:LMAX %ld", long(value*1e6));
     status = pAxis->pC_->writeController();
   }
   else {
