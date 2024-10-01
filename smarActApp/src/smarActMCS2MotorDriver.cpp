@@ -471,6 +471,11 @@ MCS2Axis::MCS2Axis(MCS2Controller *pC, int axisNo)
   sprintf(pC_->outString_, ":CHAN%d:HOLD %d", channel_, HOLD_FOREVER);
   status = pC_->writeController();
   pC_->clearErrors();
+
+  // Allow CNEN to turn closed-loop on/off
+  setIntegerParam(pC->motorStatusGainSupport_, 1);
+  setIntegerParam(pC->motorStatusHasEncoder_, 1);
+
   callParamCallbacks();
 }
 
@@ -627,6 +632,17 @@ asynStatus MCS2Axis::setPosition(double position)
 
   printf("Set position receieved\n");
   sprintf(pC_->outString_, ":CHAN%d:POS %f", channel_, position*PULSES_PER_STEP);
+  status = pC_->writeController();
+  return status;
+}
+
+asynStatus MCS2Axis::setClosedLoop(bool closedLoop)
+{
+  asynStatus status;
+  //static const char *functionName = "MCS2Axis::setClosedLoop";
+
+  // so far: only turn closed-loop-operation on or off (no aux-in)
+  sprintf(pC_->outString_, ":CHAN%d:CLIN %d", channel_, (closedLoop) ? 1:0);
   status = pC_->writeController();
   return status;
 }

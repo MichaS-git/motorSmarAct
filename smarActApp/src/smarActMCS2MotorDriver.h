@@ -117,6 +117,7 @@ public:
   asynStatus home(double min_velocity, double max_velocity, double acceleration, int forwards);
   asynStatus stop(double acceleration);
   asynStatus setPosition(double position);
+  asynStatus setClosedLoop(bool closedLoop);
 
 private:
   MCS2Controller *pC_;      /**< Pointer to the asynMotorController to which this axis belongs.
